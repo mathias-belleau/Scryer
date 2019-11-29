@@ -141,7 +141,7 @@ class Game  {
         
 
         //clean dead
-        CleanDead()
+        this.CleanDead()
 
 
         console.log("end turn")
@@ -244,7 +244,6 @@ class Game  {
 function StartResourceLoad() {
     StartResourceLoading()
 }
-
 
 //actually start the game by making new instance of games
 function StartGame(){

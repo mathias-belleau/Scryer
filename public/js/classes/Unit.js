@@ -43,56 +43,65 @@ class Unit {
         //^ if fail attempt move to second closest
 
         //make new pathfinder
-        console.log("here1")
-        var dijkstra = new ROT.Path.AStar(this.x, this.y, passableCallback(mapData, this.x, this.y));
-        console.log("here2")
-        var paths = []
-        console.log(units)
-        
-        units.forEach( function (unit) {
-            var pathCallback = function(x, y) {
-                console.log('pls')
-                paths.push([x, y]);
+        var x = this.x
+        var y = this.y
+        var passableCallback = function(x, y) {
+            //check if wall
+            if(game.mapData[x][y].tileType == 'a'){
+                return false
             }
+            //check if has unit existing
+            if(game.mapData[x][y].unit != undefined){
+                return false
+            }
+            return true
+        }
+        var astar = new ROT.Path.AStar(x, y, passableCallback);
+        console.log(astar)
 
-            console.log("here2.5", unit)
+       console.log("this unit is: ", this.tileImg)
+        for(var number = 0; number < units.length; number++){
+            var paths = []
+            
+            var unit = units[number]
+            
+            console.log("unit about to do", unit.tileImg)
             if(this != unit || this.player != unit.player){
-                    console.log("here2.6")
-                    const x = unit.x
-                    const y = unit.y
+                    console.log("need to calc path from:", this.tileImg, " to ", unit.tileImg)
+                    var xx = unit.x
+                    var yy = unit.y
+                    console.log("xx:",xx,"  yy:",yy)
                     
-                    dijkstra.compute(unit.x, unit.y, pathCallback);
+                    // var pathCallback = function(x, y) {
+                    //     console.log("x:",x)
+                    //     paths.push([x, y]);
+                    // }     
+                   
+                    astar.compute(xx, yy, function(x,y) {
+                        console.log("------------ within callback:");
+                        paths.push([x, y]);
+                    });
+
+                    
 
             }else{
-                console.log("butts")
+                console.log("don't compute as we match ourselves")
             }
-            console.log("??")
-        }.bind(this));
-        console.log("here3")
+            console.log(paths)
+            console.log("finished finding paths")
+        }
+        console.log("outside finding all paths")
         //reverse the path
-        paths = paths.reverse()
-        console.log("here4")
-        console.log(paths)
+        // paths = paths.reverse()
+        // console.log(paths)
     }
 }
 
-var testCall = (x, y) => {
-    console.log("blahh")
-}
+
+
+
 /* input callback informs about map structure */
-var passableCallback = function(mapData, x, y) {
-    console.log("here")
-    //check if wall
-    if(mapData[x][y].tileType == 'a'){
-        return false
-    }
-    //check if has unit existing
-    if(mapData[x][y].unit != undefined){
-        return false
-    }
-    //return true
-    return true
-}
+
 
 let unitList = new Map()
 
