@@ -1,0 +1,14 @@
+{
+    "Orc" : {
+        "name":"Orc",
+        "maxHP":2,
+        "str":3,
+        "tileImg":"Orc"
+    },
+    "Human" : {
+        "name":"Human",
+        "maxHP":2,
+        "str":2,
+        "tileImg":"Human"
+    }
+}
