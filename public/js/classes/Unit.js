@@ -72,15 +72,12 @@ class Unit {
                     var yy = unit.y
                     console.log("xx:",xx,"  yy:",yy)
                     
-                    // var pathCallback = function(x, y) {
-                    //     console.log("x:",x)
-                    //     paths.push([x, y]);
-                    // }     
-                   
-                    astar.compute(xx, yy, function(x,y) {
-                        console.log("------------ within callback:");
+                    var pathCallback = function(x, y) {
+                        console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx:")
                         paths.push([x, y]);
-                    });
+                    }     
+                   
+                    astar.compute(2, 2, pathCallback);
 
                     
 
