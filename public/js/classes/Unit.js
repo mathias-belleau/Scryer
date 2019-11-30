@@ -57,6 +57,11 @@ class Unit {
             return true
         }
         var astar = new ROT.Path.AStar(x, y, passableCallback);
+
+        var pathCallback = function(x, y) {
+            console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx:")
+            paths.push([x, y]);
+        } 
         console.log(astar)
 
        console.log("this unit is: ", this.tileImg)
@@ -72,12 +77,9 @@ class Unit {
                     var yy = unit.y
                     console.log("xx:",xx,"  yy:",yy)
                     
-                    var pathCallback = function(x, y) {
-                        console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx:")
-                        paths.push([x, y]);
-                    }     
+                        
                    
-                    astar.compute(2, 2, pathCallback);
+                    astar.compute(xx, yy, pathCallback);
 
                     
 
