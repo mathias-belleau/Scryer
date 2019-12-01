@@ -39,7 +39,7 @@ class Game  {
             let newTile = new Tile(x,y, (wall ? 'a' : '#'))
             this.mapData[x][y] = newTile
         }
-
+        console.log(this.mapData)
         this.map.create(mapBuildCallback.bind(this))
 
         // make our players
@@ -47,11 +47,13 @@ class Game  {
         this.player2 = new Player('NPC', 1)
 
         console.log("making human")
-        let newHuman = new Unit(this.player1, "Human")
+        this.CreateAndSpawn(this.player1, "Human")
+        this.CreateAndSpawn(this.player1, "Human")
+        // this.CreateAndSpawn(this.player1, "Human")
 
-        let newOrc = new Unit(this.player2, "Orc")
-        this.SpawnUnit(newHuman,1,1)
-        this.SpawnUnit(newOrc,15,2)
+        this.CreateAndSpawn(this.player2, "Orc")
+        this.CreateAndSpawn(this.player2, "Orc")
+        
         
         this.DrawMap()
                 
@@ -62,14 +64,26 @@ class Game  {
         
     }
 
+    //create and spawn unit
+    CreateAndSpawn(player, unitType){
+        var newUnit = this.CreateUnit(player, unitType)
+
+        //get proper tile to spawn in for player side
+        this.SpawnUnit(newUnit, Math.floor(Math.random() * 21), Math.floor(Math.random() * 12))
+    }
+
+    //creates a new unit but doesn't spawn it
+    CreateUnit(player, unitType){
+        let newUnit = new Unit(player, unitType)
+        player.AddUnit(newUnit)
+        return newUnit
+    }
+
+    //places unit in the map
     SpawnUnit(unit, x, y){
         this.mapData[x][y].unit = unit
         this.mapData[x][y].unit.x = x
         this.mapData[x][y].unit.y = y
-    }
-
-    GetPoistion(e){
-        
     }
 
     DrawMap(){
@@ -143,7 +157,7 @@ class Game  {
         //clean dead
         this.CleanDead()
 
-
+        this.DrawMap()
         console.log("end turn")
     }
 
@@ -192,36 +206,6 @@ class Game  {
         }
     }
 
-    Movement(unitToMove, x, y){
-        console.log("moving unit", unitToMove)
-        //get this units Tile
-        var oldTile = this.mapData[unitToMove.x][unitToMove.y]
-
-        //Get next tile
-        console.log(x,y)
-
-        var newTile = this.GetTile(x+1,y)
-        
-       if(newTile == undefined){
-           return
-       }
-       
-        //assign unit to newTile
-        newTile.unit=unitToMove
-
-        //assign unit to new coords
-        unitToMove.x = newTile.x
-        unitToMove.y = newTile.y
-
-        //clear old tiles unit
-        oldTile.unit = undefined
-
-        //now draw both tiles again
-
-        this.DrawTile(oldTile.x, oldTile.y)
-        this.DrawTile(newTile.x, newTile.y)
-
-    }
 
     GetTile(x, y){
         if(x >= this.width || y >= this.height){

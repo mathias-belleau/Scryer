@@ -6788,7 +6788,6 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
         }
 
         var neighbors = this._getNeighbors(_item.x, _item.y);
-
         for (var i = 0; i < neighbors.length; i++) {
           var neighbor = neighbors[i];
           var x = neighbor[0];
@@ -6803,13 +6802,10 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
           this._add(x, y, _item);
         }
       }
-
       var item = this._done[fromX + "," + fromY];
-
       if (!item) {
         return;
       }
-
       while (item) {
         callback(item.x, item.y);
         item = item.prev;
