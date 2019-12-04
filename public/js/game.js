@@ -6,11 +6,12 @@ let game = {}
 
 class Game  {
     constructor() {
+        this.GameOver = false
         const scale = 1
 
         this.width = 22*scale
         this.height = 12*scale
-        console.log(tileSet)
+        // console.log(tileSet)
         var options = {
             layout: "tile",
             bg: "transparent",
@@ -39,37 +40,42 @@ class Game  {
             let newTile = new Tile(x,y, (wall ? 'a' : '#'))
             this.mapData[x][y] = newTile
         }
-        console.log(this.mapData)
+        // console.log(this.mapData)
         this.map.create(mapBuildCallback.bind(this))
 
         // make our players
         this.player1 = new Player('player', 0)
         this.player2 = new Player('NPC', 1)
 
-        console.log("making human")
-        this.CreateAndSpawn(this.player1, "Human")
-        this.CreateAndSpawn(this.player1, "Human")
-        // this.CreateAndSpawn(this.player1, "Human")
-
-        this.CreateAndSpawn(this.player2, "Orc")
-        this.CreateAndSpawn(this.player2, "Orc")
-        
+        // console.log("making human")
+        for(var spawnCount = 0; spawnCount < 10; spawnCount++){
+            this.CreateAndSpawn(this.player1, "Human")
+            this.CreateAndSpawn(this.player2, "Orc")
+            if(spawnCount % 3 == 0){
+                this.CreateAndSpawn(this.player1, "Human")
+            }
+        }
         
         this.DrawMap()
                 
         let clickCallback = function(e) {
             console.log(this.display.eventToPosition(e))
         }
-        //window.addEventListener("click", clickCallback.bind(this)) 
+        window.addEventListener("click", clickCallback.bind(this)) 
         
     }
 
     //create and spawn unit
     CreateAndSpawn(player, unitType){
         var newUnit = this.CreateUnit(player, unitType)
-
+        var modifier = (player == this.player1) ? 0 : 10
+        console.log(modifier)
         //get proper tile to spawn in for player side
-        this.SpawnUnit(newUnit, Math.floor(Math.random() * 21), Math.floor(Math.random() * 12))
+        //TODO: don't make random
+        do {
+            var tile = this.GetTile(Math.floor( (Math.random() * 10) + 1 + modifier), Math.floor((Math.random() * 10) +1) )
+        }while(tile.unit)
+        this.SpawnUnit(newUnit,tile.x, tile.y )
     }
 
     //creates a new unit but doesn't spawn it
@@ -98,9 +104,9 @@ class Game  {
 
                 //if this tile has a unit on it, push that too
                 if(this.mapData[x][y].unit != undefined){
-                    console.log("found unit: ", this.mapData[x][y].unit)
+                    // console.log("found unit: ", this.mapData[x][y].unit)
                     whatToDraw.push(this.mapData[x][y].unit.tileImg)
-                    console.log(whatToDraw)
+                    // console.log(whatToDraw)
                 }
 
                 //actually draw what's on this to map
@@ -118,9 +124,9 @@ class Game  {
 
         //if this tile has a unit on it, push that too
         if(this.mapData[x][y].unit != undefined){
-            console.log("found unit: ", this.mapData[x][y].unit)
+            // console.log("found unit: ", this.mapData[x][y].unit)
             whatToDraw.push(this.mapData[x][y].unit.tileImg)
-            console.log(whatToDraw)
+            // console.log(whatToDraw)
         }
 
         //actually draw what's on this to map
@@ -129,8 +135,41 @@ class Game  {
     }
 
     Turn(){
-        console.log("New turn")
+        if(this.GameOver){
+            return
+        }
+        // console.log("New turn")
         //get a list of units left on the map
+        var units = this.GetUnits()
+
+        this.SetSpeedForTurn(units)
+        units = this.MakeTurnSchedule(units)
+        units.forEach(function (unit) {
+            if(!this.GameOver){
+                //iterate thru each unit count.
+                //TODO: clean up dead after every move?
+                
+                if(unit.hp > 0){
+                    //make sure this unit didn't already die this turn
+                    unit.TakeTurn(this.mapData, units)
+                }
+                this.CleanDead()
+                this.CheckVictory()
+            }
+        }.bind(this))
+        
+        //clean dead
+        this.CleanDead()
+
+        //this.DrawMap()
+        // console.log("end turn")
+
+        //check for victory
+        this.CheckVictory()
+    }
+
+    //get a list of units left on the map
+    GetUnits(){
         var units = []
         for (var x =0; x < this.width; x++){
             for(var y = 0; y < this.height; y++){
@@ -139,26 +178,7 @@ class Game  {
                 }
             }
         }
-        this.SetSpeedForTurn(units)
-        units = this.MakeTurnSchedule(units)
-        units.forEach(function (unit) {
-            //iterate thru each unit count.
-            //TODO: clean up dead after every move?
-            
-            if(unit.hp > 0){
-                //make sure this unit didn't already die this turn
-                unit.TakeTurn(this.mapData, units)
-            }
-            this.CleanDead()
-
-        }.bind(this))
-        
-
-        //clean dead
-        this.CleanDead()
-
-        this.DrawMap()
-        console.log("end turn")
+        return units
     }
 
     //this is used for ROT scheduler. it sets a units speed based on their position within the map
@@ -171,9 +191,9 @@ class Game  {
         //cav
         //right most units for left side v mixed
         //left most units for right side ^
-        console.log(units)
+        // console.log(units)
         units.forEach(function (unit) {
-            console.log(unit)
+            // console.log(unit)
             if(unit.ranged){
                 unit.speed= 1000
             }else {
@@ -199,10 +219,22 @@ class Game  {
                 if(this.mapData[x][y].unit){
                     if(this.mapData[x][y].unit.hp <= 0){
                         this.mapData[x][y].unit = undefined
+                        this.DrawTile(x,y)
                     }
-                    
                 }
             }
+        }
+    }
+
+    CheckVictory(){
+        var units = this.GetUnits()
+        //only 1 victory for now
+        //all units for a player dead
+        var p1Alive = units.filter( (a) => a.Alive() && a.player == game.player1)
+        var p2Alive = units.filter( (a) => a.Alive() && a.player == game.player2)
+        console.log("p1 alive: ", p1Alive.length, " VS p2 alive: ", p2Alive.length)
+        if(p1Alive <= 0 || p2Alive <= 0){
+            game.GameOver = true
         }
     }
 
@@ -211,7 +243,7 @@ class Game  {
         if(x >= this.width || y >= this.height){
             return undefined
         } else {
-            console.log(this.mapData[x][y])
+            // console.log(this.mapData[x][y])
             return this.mapData[x][y]
         }
     }
