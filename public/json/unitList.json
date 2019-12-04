@@ -11,4 +11,11 @@
         "str":2,
         "tileImg":"Human"
     }
+    ,
+    "Sigmund" : {
+        "name":"Sigmund",
+        "maxHP":6,
+        "str":5,
+        "tileImg":"Sigmund"
+    }
 }

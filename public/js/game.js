@@ -55,6 +55,7 @@ class Game  {
                 this.CreateAndSpawn(this.player1, "Human")
             }
         }
+        this.CreateAndSpawn(this.player2, "Sigmund")
         
         this.DrawMap()
                 
@@ -285,3 +286,5 @@ function create2DArray(numRows, numColumns) {
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  
