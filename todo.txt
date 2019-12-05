@@ -1,5 +1,4 @@
 IN PROGRESS:
-    update spawning system to be by rank and file leaders+mages -> archers -> infantry VS infantry <- Archers <- leaders+mages
 
 
 TODO:
@@ -15,5 +14,7 @@ TODO:
 
 
 FIX:
+    units not taking turns in order?
 
 DONE:
+    update spawning system to be by rank and file leaders+mages -> archers -> infantry VS infantry <- Archers <- leaders+mages

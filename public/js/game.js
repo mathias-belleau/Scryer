@@ -49,14 +49,29 @@ class Game  {
 
         // console.log("making human")
         for(var spawnCount = 0; spawnCount < 20; spawnCount++){
-            this.CreateAndSpawn(this.player1, "Human")
-            this.CreateAndSpawn(this.player2, "Orc")
+            this.CreateUnit(this.player1, "Human")
+            this.CreateUnit(this.player2, "Orc")
             if(spawnCount % 2 == 0){
-                this.CreateAndSpawn(this.player1, "Human")
+                this.CreateUnit(this.player1, "Human")
             }
         }
-        this.CreateAndSpawn(this.player2, "Sigmund")
+        this.CreateUnit(this.player2, "Sigmund")
         
+        this.player1.SortRankFile(this.width, this.height)
+        this.player2.SortRankFile(this.width, this.height)
+
+        console.log(this.player1.unitList)
+        for(var u = 0; u < this.player1.unitList.length; u++){
+            var t = this.player1.unitList[u]
+            this.SpawnUnit(t, t.x, t.y)
+        }
+
+        
+        for(var u = 0; u < this.player2.unitList.length; u++){
+            var t = this.player2.unitList[u]
+            this.SpawnUnit(t, t.x, t.y)
+        }
+
         this.DrawMap()
                 
         let clickCallback = function(e) {
@@ -142,9 +157,10 @@ class Game  {
         // console.log("New turn")
         //get a list of units left on the map
         var units = this.GetUnits()
-
-        this.SetSpeedForTurn(units)
+        console.log(units[0])
+        units = this.SetSpeedForTurn(units)
         units = this.MakeTurnSchedule(units)
+        console.log(units[0])
         units.forEach(function (unit) {
             if(!this.GameOver){
                 //iterate thru each unit count.
@@ -207,10 +223,11 @@ class Game  {
                 }
             }
         })
+        return units
     }
 
     MakeTurnSchedule(units){
-        units.sort((a, b) => b.speed - a.speed)
+        units.sort((a, b) => a.speed - b.speed)
         return units
     }
 
