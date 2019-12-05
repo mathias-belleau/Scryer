@@ -48,7 +48,7 @@ class Game  {
         this.player2 = new Player('NPC', 1)
 
         // console.log("making human")
-        for(var spawnCount = 0; spawnCount < 20; spawnCount++){
+        for(var spawnCount = 0; spawnCount < 16; spawnCount++){
             this.CreateUnit(this.player1, "Human")
             this.CreateUnit(this.player2, "Orc")
             if(spawnCount % 2 == 0){
@@ -250,7 +250,7 @@ class Game  {
         //all units for a player dead
         var p1Alive = units.filter( (a) => a.Alive() && a.player == game.player1)
         var p2Alive = units.filter( (a) => a.Alive() && a.player == game.player2)
-        console.log("p1 alive: ", p1Alive.length, " VS p2 alive: ", p2Alive.length)
+        // console.log("p1 alive: ", p1Alive.length, " VS p2 alive: ", p2Alive.length)
         if(p1Alive <= 0 || p2Alive <= 0){
             game.GameOver = true
         }

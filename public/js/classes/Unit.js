@@ -79,22 +79,41 @@ class Unit {
         var xb = this.x
         var yb = this.y
         var passableCallback = function(xb, yb) {
-            if(!unit.Alive()){
+            if(game.mapData[xb] == undefined || game.mapData[xb][yb] == undefined){
                 return 0
-            }
-            //if self || or target return true 
-            if((this.x == xb && this.y == yb) || (unit.x == xb && unit.y == yb)){
-                return 1
             }
             //check if wall
             if(game.mapData[xb][yb].tileType == 'a'){
                 return 0
             }
-            //check if has unit existing
-            if( game.mapData[xb][yb].unit != undefined){
+            //get list of neighbours somehow?
+            // [0,1]
+            // [0,-1]
+            // [1,0]
+            // [-1,0]
+            var neighs = []
+            neighs.push([this._fromX,this._fromY + 1])
+            neighs.push([this._fromX,this._fromY - 1])
+            neighs.push([this._fromX + 1,this._fromY])
+            neighs.push([this._fromX - 1,this._fromY])
+
+
+            // console.log(this)
+            if(!unit.Alive()){
                 return 0
             }
-            return 1
+            //if self || or target || empty return true 
+            if((this._fromX == xb && this._fromY == yb) || (unit.x == xb && unit.y == yb) || game.mapData[xb][yb].unit == undefined){
+                return 1
+            }
+            
+            //check if has unit existing
+            var thisCoords = [xb,yb]
+            if( game.mapData[xb][yb].unit != undefined 
+                && (!contains(neighs, thisCoords) && game.mapData[this._fromX][this._fromY].unit.player == game.mapData[xb][yb].unit.player) ){
+                return 1
+            }
+            return 0
         }
         
         //store all our paths to all the units
@@ -114,8 +133,11 @@ class Unit {
             // console.log("unit about to path to", unit.tileImg)
             //dont path to ourselves, or a friendly unit
             if(this != unit && this.player != unit.player){
-                    var astar = new ROT.Path.AStar(xb, yb, passableCallback);
+                    var astar = new ROT.Path.AStar(xb, yb, passableCallback, {topology:4});
 
+                    //get the neighbours of this unit for callback
+                    //var neighs = astar._getNeighbors(xb, yb)
+                    
                     // console.log("need to calc path from:", this.tileImg, " to ", unit.tileImg)
                     var x = unit.x
                     var y = unit.y
@@ -222,3 +244,30 @@ function StartResourceLoading(){
 
 
 
+function contains(a, obj) {
+    for (var i = 0; i < a.length; i++) {
+        if (a[i].toString() === obj.toString()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function _getNeighbors(self, cx, cy) {
+    var result = 0;
+
+    for (var i = 0; i < self._dirs.length; i++) {
+      var dir = self._dirs[i];
+      var x = cx + dir[0];
+      var y = cy + dir[1];
+
+      if (x < 0 || x >= self._width || y < 0 || y >= self._height) {
+        continue;
+      }
+
+      //result += self._map[x][y] == 1 ? 1 : 0;
+      result+= 1
+    }
+
+    return result;
+  };
