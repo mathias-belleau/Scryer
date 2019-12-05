@@ -219,7 +219,9 @@ class Game  {
                     unit.speed = 1000 - ( (22 - unit.x) * 5 )
                 }else {
                     //if right side
+                    console.log("position: ", unit.x)
                     unit.speed = 1000 - ( (unit.x) * 5 )
+                    console.log("speed: ", unit.speed)
                 }
             }
         })
@@ -227,7 +229,8 @@ class Game  {
     }
 
     MakeTurnSchedule(units){
-        units.sort((a, b) => a.speed - b.speed)
+        units.sort((a, b) => b.speed - a.speed)
+        console.log("speeddddd: ", units)
         return units
     }
 

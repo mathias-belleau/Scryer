@@ -108,9 +108,11 @@ class Unit {
             }
             
             //check if has unit existing
-            var thisCoords = [xb,yb]
-            if( game.mapData[xb][yb].unit != undefined 
-                && (!contains(neighs, thisCoords) && game.mapData[this._fromX][this._fromY].unit.player == game.mapData[xb][yb].unit.player) ){
+            // var thisCoords = [xb,yb]
+            // if( (!contains(neighs, thisCoords) && game.mapData[this._fromX][this._fromY].unit.player == game.mapData[xb][yb].unit.player) ){
+            //     return 1
+            // }
+            if(game.mapData[xb][yb].unit.player != game.mapData[this._fromX][this._fromY].unit.player){
                 return 1
             }
             return 0
@@ -200,7 +202,7 @@ class Unit {
         // console.log(target.x)
         var newTile = game.GetTile(target.x,target.y)
         
-       if(newTile == undefined){
+       if(newTile == undefined || newTile.unit != undefined){
            return
        }
        
@@ -247,6 +249,8 @@ function StartResourceLoading(){
 function contains(a, obj) {
     for (var i = 0; i < a.length; i++) {
         if (a[i].toString() === obj.toString()) {
+            console.log("found neighbours: " + a)
+            console.log(obj)
             return true;
         }
     }
