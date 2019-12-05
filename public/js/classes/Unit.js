@@ -56,13 +56,13 @@ class Unit {
             }
             dieRolls.push(value)
         }
-        console.log("dmg done: ", dieRolls)
+        //console.log("dmg done: ", dieRolls)
         if(dmg >= 1){
             //hit our enemy 
             var enemyUnit = game.GetTile(target.x, target.y)
             enemyUnit = enemyUnit.unit
             enemyUnit.TakeDamage(dmg)
-            console.log(enemyUnit)
+            //console.log(enemyUnit)
         }
     }
 
@@ -135,7 +135,7 @@ class Unit {
             // console.log("unit about to path to", unit.tileImg)
             //dont path to ourselves, or a friendly unit
             if(this != unit && this.player != unit.player){
-                    var astar = new ROT.Path.AStar(xb, yb, passableCallback, {topology:4});
+                    var astar = new ROT.Path.AStar(xb, yb, passableCallback, {topology:8});
 
                     //get the neighbours of this unit for callback
                     //var neighs = astar._getNeighbors(xb, yb)
@@ -161,9 +161,19 @@ class Unit {
         //sort paths by distance
         paths = paths.sort(function(a,b) {return a.length - b.length})
         // console.log("b: ", paths)
-        if(paths.length > 0 && paths[0].length >= 0){
-            //get first target
+
+        var targetPath = undefined
+        //see if i we have a pathable target in our first 3 targets
+        if(paths.length > 0 && ( game.GetTile(paths[0][1][0],paths[0][1][1]).unit == undefined || game.GetTile(paths[0][1][0],paths[0][1][1]).unit.player != this.player)){
             var targetPath = paths[0]
+        } else if (paths.length > 1 && ( game.GetTile(paths[1][1][0],paths[1][1][1]).unit == undefined || game.GetTile(paths[1][1][0],paths[1][1][1]).unit.player != this.player)){
+            var targetPath = paths[1]
+        }else if (paths.length > 2 && ( game.GetTile(paths[2][1][0],paths[2][1][1]).unit == undefined ||  game.GetTile(paths[2][1][0],paths[2][1][1]).unit.player != this.player) ) {
+            var targetPath = paths[2]
+        }
+        if(targetPath != undefined){
+            //get first target
+            
             var target = {x: targetPath[targetPath.length-1][0], y: targetPath[targetPath.length-1][1]}
             //slice off first and last which is unit and target
             targetPath = targetPath.slice(1,-1)

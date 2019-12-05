@@ -48,10 +48,10 @@ class Game  {
         this.player2 = new Player('NPC', 1)
 
         // console.log("making human")
-        for(var spawnCount = 0; spawnCount < 30; spawnCount++){
+        for(var spawnCount = 0; spawnCount < 40; spawnCount++){
             this.CreateUnit(this.player1, "Human")
             this.CreateUnit(this.player2, "Orc")
-            if(spawnCount % 2 == 0){
+            if(spawnCount % 3 == 0){
                 this.CreateUnit(this.player1, "Human")
             }
         }
@@ -60,7 +60,6 @@ class Game  {
         this.player1.SortRankFile(this.width, this.height)
         this.player2.SortRankFile(this.width, this.height)
 
-        console.log(this.player1.unitList)
         for(var u = 0; u < this.player1.unitList.length; u++){
             var t = this.player1.unitList[u]
             this.SpawnUnit(t, t.x, t.y)
@@ -75,7 +74,7 @@ class Game  {
         this.DrawMap()
                 
         let clickCallback = function(e) {
-            console.log(this.display.eventToPosition(e))
+            //console.log(this.display.eventToPosition(e))
         }
         window.addEventListener("click", clickCallback.bind(this)) 
         
@@ -85,7 +84,6 @@ class Game  {
     CreateAndSpawn(player, unitType){
         var newUnit = this.CreateUnit(player, unitType)
         var modifier = (player == this.player1) ? 0 : 10
-        console.log(modifier)
         //get proper tile to spawn in for player side
         //TODO: don't make random
         do {
@@ -157,10 +155,8 @@ class Game  {
         // console.log("New turn")
         //get a list of units left on the map
         var units = this.GetUnits()
-        console.log(units[0])
         units = this.SetSpeedForTurn(units)
         units = this.MakeTurnSchedule(units)
-        console.log(units[0])
         units.forEach(function (unit) {
             if(!this.GameOver){
                 //iterate thru each unit count.
@@ -228,7 +224,6 @@ class Game  {
 
     MakeTurnSchedule(units){
         units.sort((a, b) => a.speed - b.speed)
-        console.log("speeddddd: ", units)
         return units
     }
 
