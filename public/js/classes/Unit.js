@@ -9,6 +9,8 @@ class Unit {
         this.hp = this.maxHp = unitFetched.maxHP
         this.attacked = false
         this.ranged = false
+        this.leader = false
+        this.magic = false
         this.tileImg = unitFetched.tileImg
         this.strength = unitFetched.str
         this.x = undefined
@@ -135,7 +137,7 @@ class Unit {
         //sort paths by distance
         paths = paths.sort(function(a,b) {return a.length - b.length})
         // console.log("b: ", paths)
-        if(paths[0].length >= 0){
+        if(paths.length > 0 && paths[0].length >= 0){
             //get first target
             var targetPath = paths[0]
             var target = {x: targetPath[targetPath.length-1][0], y: targetPath[targetPath.length-1][1]}

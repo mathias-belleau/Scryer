@@ -10,7 +10,7 @@ class Game  {
         const scale = 1
 
         this.width = 22*scale
-        this.height = 12*scale
+        this.height = 13*scale
         // console.log(tileSet)
         var options = {
             layout: "tile",
@@ -32,7 +32,7 @@ class Game  {
         document.body.appendChild(this.display.getContainer());
         
         // create our battle map
-        this.map = new ROT.Map.Arena(22*scale,12*scale)
+        this.map = new ROT.Map.Arena(22*scale,13*scale)
 
         //create our list of tiles
         this.mapData = create2DArray(this.height,this.width)
@@ -48,10 +48,10 @@ class Game  {
         this.player2 = new Player('NPC', 1)
 
         // console.log("making human")
-        for(var spawnCount = 0; spawnCount < 10; spawnCount++){
+        for(var spawnCount = 0; spawnCount < 20; spawnCount++){
             this.CreateAndSpawn(this.player1, "Human")
             this.CreateAndSpawn(this.player2, "Orc")
-            if(spawnCount % 3 == 0){
+            if(spawnCount % 2 == 0){
                 this.CreateAndSpawn(this.player1, "Human")
             }
         }
