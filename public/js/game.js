@@ -49,7 +49,7 @@ class Game  {
         this.player2 = new Player('NPC', 1)
 
         // console.log("making human")
-        var spawnAmount = (Math.random() * 10) + 10
+        var spawnAmount = (Math.random() * 20) + 10
         this.CreateUnit(this.player1, "Sigmund")
         for(var spawnCount = 0; spawnCount < spawnAmount; spawnCount++){
             this.CreateUnit(this.player1, "Human")
