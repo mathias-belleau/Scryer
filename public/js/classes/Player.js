@@ -31,6 +31,7 @@ class Player {
         console.log(this.unitList)
         console.log("have ", this.unitCount.infantry.length, " infantry")
         this.unitCount.ranged = this.unitList.filter( unit => unit.ranged == true && unit.leader == false && unit.magic == false)
+        console.log("ranged: ", this.unitCount.ranged.length)
         this.unitCount.leader = this.unitList.filter( unit => unit.leader == true || unit.magic == true)
 
         //game height width hardcoded here. prolly bad
@@ -40,7 +41,7 @@ class Player {
 
         //how far out we can play units. this is inverse for right side player
         console.log(width)
-        var widthCap = (width - 4) / 2
+        var widthCap = (width - 8) / 2
         console.log("widthCap: " , widthCap)
         var maxUnitNum = heightCap * widthCap
         if(this.unitCount.infantry + this.unitCount.ranged + this.unitCount.leaderMagic > maxUnitNum ){
@@ -48,19 +49,34 @@ class Player {
             return
         }
 
-        var spawnOrder = GenerateSpawnOrder(this.side, heightCap, widthCap, this.unitCount.infantry.length)
-        console.log(spawnOrder)
-        for(var x = 0; x < this.unitCount.infantry.length; x++){
-            //for each unit in infantry get it's position it should be at 
-            console.log('')
-            this.unitList[x].x = spawnOrder[x].x
-            this.unitList[x].y = spawnOrder[x].y
+        var spawnOrderInf = GenerateSpawnOrder(this.side, heightCap, widthCap, this.unitCount.infantry.length)
+        console.log(spawnOrderInf)
+        if(spawnOrderInf.length > 0){
+            for(var x = 0; x < this.unitCount.infantry.length; x++){
+                //for each unit in infantry get it's position it should be at 
+                this.unitCount.infantry[x].x = spawnOrderInf[x].x
+                this.unitCount.infantry[x].y = spawnOrderInf[x].y
+            }
         }
+
+        var spawnOrderRan = GenerateSpawnOrder(this.side, heightCap, widthCap, this.unitCount.ranged.length, Math.floor(this.unitCount.infantry.length / heightCap) + 1)
+        console.log("spawn ranged:", spawnOrderRan)
+        console.log("spawn ranged:", this.unitCount.ranged)
+        if(spawnOrderRan.length > 0){
+            for(var x = 0; x < this.unitCount.ranged.length; x++){
+                //for each unit in infantry get it's position it should be at 
+                this.unitCount.ranged[x].x = spawnOrderRan[x].x
+                this.unitCount.ranged[x].y = spawnOrderRan[x].y
+            }
+        }
+       
+
+        
        
     }
 }
 
-function GenerateSpawnOrder(side, heightCap, widthCap, count){
+function GenerateSpawnOrder(side, heightCap, widthCap, count, mod = 0){
     var heightMod = [0, 1, -1, 2, -2, 3, -3, 4, -4]
     
     for(var x = 0; x < count / heightCap; x++){
@@ -83,18 +99,18 @@ function GenerateSpawnOrder(side, heightCap, widthCap, count){
     if(side == 0){
         startX = widthCap
     }else {
-        startX = (widthCap*2 + 4) - widthCap
+        startX = (widthCap*2 + 8) - widthCap
     }
     startY = (heightCap / 2) + 1.5
     console.log("count: ", count)
     if(side == 0){
         for(var x = 0; x < count; x++){
-            placementList.push( {x:startX - (Math.floor(x / heightCap) ), y: startY + heightMod[x]} )
+            placementList.push( {x:startX - (Math.floor(x / heightCap) + mod ), y: startY + heightMod[x]} )
         }
     } else {
         for(var x = 0; x < count; x++){
             console.log("startX: ", startX)
-            placementList.push( {x:startX + (Math.floor(x / heightCap) ), y: startY + heightMod[x]} )
+            placementList.push( {x:startX + (Math.floor(x / heightCap) + mod ), y: startY + heightMod[x]} )
         }
     }
     return placementList

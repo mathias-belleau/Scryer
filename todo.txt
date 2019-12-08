@@ -1,20 +1,20 @@
 IN PROGRESS:
-
-
+    convert turns to single unit based instead of all at once
+    
 TODO:
     add stats overlay
     add stats panel
-    add ranged combat
     add spells + targeting system
+    
     arrow animation
     walking animation
     automate gameplay
     army save system + game loading based on armies loaded
 
-
-
 FIX:
-    units not taking turns in order?
 
 DONE:
+    add team color
+    units not taking turns in order?
+    add ranged combat
     update spawning system to be by rank and file leaders+mages -> archers -> infantry VS infantry <- Archers <- leaders+mages

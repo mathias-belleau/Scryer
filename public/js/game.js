@@ -13,6 +13,7 @@ class Game  {
         this.height = 13*scale
         // console.log(tileSet)
         var options = {
+            tileColorize:true,
             layout: "tile",
             bg: "transparent",
             tileWidth: 32,
@@ -48,14 +49,19 @@ class Game  {
         this.player2 = new Player('NPC', 1)
 
         // console.log("making human")
-        for(var spawnCount = 0; spawnCount < 40; spawnCount++){
+        var spawnAmount = (Math.random() * 10) + 10
+        this.CreateUnit(this.player1, "Sigmund")
+        for(var spawnCount = 0; spawnCount < spawnAmount; spawnCount++){
             this.CreateUnit(this.player1, "Human")
             this.CreateUnit(this.player2, "Orc")
-            if(spawnCount % 3 == 0){
-                this.CreateUnit(this.player1, "Human")
+            if(spawnCount % 2 == 0){
+                this.CreateUnit(this.player1, "Human Bowman")
+            }
+            if(spawnCount % 2 == 0){
+                this.CreateUnit(this.player2, "Orc Axe Thrower")
             }
         }
-        this.CreateUnit(this.player2, "Sigmund")
+        
         
         this.player1.SortRankFile(this.width, this.height)
         this.player2.SortRankFile(this.width, this.height)
@@ -110,21 +116,8 @@ class Game  {
         //iterate over each tile
         for (var x =0; x < this.width; x++){
             for(var y = 0; y < this.height; y++){
-                //build our array to draw
-                //[tile, unitTile]
-                let whatToDraw = []
-                //push this tiles image
-                whatToDraw.push(this.mapData[x][y].tileType)
-
-                //if this tile has a unit on it, push that too
-                if(this.mapData[x][y].unit != undefined){
-                    // console.log("found unit: ", this.mapData[x][y].unit)
-                    whatToDraw.push(this.mapData[x][y].unit.tileImg)
-                    // console.log(whatToDraw)
-                }
-
-                //actually draw what's on this to map
-                this.display.draw(x,y, whatToDraw)
+                this.DrawTile(x,y)
+               
             }
         }
     }
@@ -135,16 +128,19 @@ class Game  {
         let whatToDraw = []
         //push this tiles image
         whatToDraw.push(this.mapData[x][y].tileType)
-
+        var bg = ["transparent"]
+        var fg = ["transparent"]
         //if this tile has a unit on it, push that too
         if(this.mapData[x][y].unit != undefined){
             // console.log("found unit: ", this.mapData[x][y].unit)
             whatToDraw.push(this.mapData[x][y].unit.tileImg)
             // console.log(whatToDraw)
+            fg.push("transparent")
+            bg.push((this.player1 == this.mapData[x][y].unit.player) ? "rgba(0,255,0,.2" : "rgba(255,0,0,.2")
         }
 
         //actually draw what's on this to map
-        this.display.draw(x,y, whatToDraw)
+        this.display.draw(x,y, whatToDraw, fg, bg)
 
     }
 

@@ -5,17 +5,31 @@
         "str":3,
         "tileImg":"Orc"
     },
+    "Orc Axe Thrower": {
+        "name":"Orc Axe Thrower",
+        "maxHP":2,
+        "str":1,
+        "ranged":true,
+        "tileImg":"Orc Priest"
+    },
     "Human" : {
         "name":"Human",
         "maxHP":2,
         "str":2,
         "tileImg":"Human"
-    }
-    ,
+    },
+    "Human Bowman" : {
+        "name":"Human Bowman",
+        "maxHP":1,
+        "str":1,
+        "ranged":true,
+        "tileImg":"Human Bowman"
+    },
     "Sigmund" : {
         "name":"Sigmund",
         "maxHP":6,
         "str":5,
         "tileImg":"Sigmund"
     }
+    
 }
