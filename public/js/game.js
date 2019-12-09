@@ -49,15 +49,15 @@ class Game  {
         this.player2 = new Player('NPC', 1)
 
         // console.log("making human")
-        var spawnAmount = (Math.random() * 20) + 10
+        var spawnAmount = (Math.random() * 30) + 10
         this.CreateUnit(this.player1, "Sigmund")
         for(var spawnCount = 0; spawnCount < spawnAmount; spawnCount++){
             this.CreateUnit(this.player1, "Human")
             this.CreateUnit(this.player2, "Orc")
-            if(spawnCount % 2 == 0){
+            if(spawnCount % 3 == 0){
                 this.CreateUnit(this.player1, "Human Bowman")
             }
-            if(spawnCount % 2 == 0){
+            if(spawnCount % 3 == 0){
                 this.CreateUnit(this.player2, "Orc Axe Thrower")
             }
         }
@@ -144,29 +144,40 @@ class Game  {
 
     }
 
-    Turn(){
-        if(this.GameOver){
-            return
-        }
-        // console.log("New turn")
-        //get a list of units left on the map
-        var units = this.GetUnits()
-        units = this.SetSpeedForTurn(units)
-        units = this.MakeTurnSchedule(units)
-        units.forEach(function (unit) {
+    UnitTakeTurn(){
+        if(this.unitsForTurn.length <= 0){
+            this.EndTurn()
+        }else{
+            var unit = this.unitsForTurn.pop()
+
             if(!this.GameOver){
                 //iterate thru each unit count.
                 //TODO: clean up dead after every move?
                 
                 if(unit.hp > 0){
                     //make sure this unit didn't already die this turn
-                    unit.TakeTurn(this.mapData, units)
+                    unit.TakeTurn(this.mapData, this.GetUnits())
                 }
                 this.CleanDead()
                 this.CheckVictory()
+
+                this.WaitForAnimation(100)
+                
             }
-        }.bind(this))
-        
+        }
+    }
+
+    async WaitForAnimation(ms){
+        await sleep(ms)
+        this.UnitTakeTurn()
+    }
+
+    async WaitForEndTurn(ms){
+        await sleep(ms)
+        this.Turn()
+    }
+
+    EndTurn(){
         //clean dead
         this.CleanDead()
 
@@ -175,6 +186,23 @@ class Game  {
 
         //check for victory
         this.CheckVictory()
+
+        console.log("Turn over")
+
+        this.WaitForEndTurn(1000)
+    }
+
+    Turn(){
+        if(this.GameOver){
+            return
+        }
+        // console.log("New turn")
+        //get a list of units left on the map
+        this.unitsForTurn = this.GetUnits()
+        this.unitsForTurn = this.SetSpeedForTurn(this.unitsForTurn)
+        this.unitsForTurn = this.MakeTurnSchedule(this.unitsForTurn)
+        
+        this.UnitTakeTurn()
     }
 
     //get a list of units left on the map
@@ -219,7 +247,8 @@ class Game  {
     }
 
     MakeTurnSchedule(units){
-        units.sort((a, b) => a.speed - b.speed)
+        //set it to slowest -> fastest
+        units.sort((a, b) => b.speed - a.speed)
         return units
     }
 
@@ -262,9 +291,15 @@ class Game  {
         const turnButton = document.getElementById("TurnButton")
         turnButton.addEventListener("click", function(e) {
             game.Turn()
+            this.style.display = 'block'; 
+            this.style.display = 'none'
         })
     }
 }
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
 //loads the resources for the game
 function StartResourceLoad() {
@@ -291,9 +326,5 @@ function create2DArray(numRows, numColumns) {
  
 	return array; 
 }
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
 
   

@@ -41,7 +41,7 @@ class Player {
 
         //how far out we can play units. this is inverse for right side player
         console.log(width)
-        var widthCap = (width - 8) / 2
+        var widthCap = (width - 6) / 2
         console.log("widthCap: " , widthCap)
         var maxUnitNum = heightCap * widthCap
         if(this.unitCount.infantry + this.unitCount.ranged + this.unitCount.leaderMagic > maxUnitNum ){
@@ -99,7 +99,7 @@ function GenerateSpawnOrder(side, heightCap, widthCap, count, mod = 0){
     if(side == 0){
         startX = widthCap
     }else {
-        startX = (widthCap*2 + 8) - widthCap
+        startX = (widthCap*2 + 6) - widthCap
     }
     startY = (heightCap / 2) + 1.5
     console.log("count: ", count)

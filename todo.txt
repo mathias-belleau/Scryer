@@ -1,11 +1,10 @@
 IN PROGRESS:
     convert turns to single unit based instead of all at once
-    
+
 TODO:
     add stats overlay
     add stats panel
     add spells + targeting system
-    
     arrow animation
     walking animation
     automate gameplay
