@@ -198,7 +198,8 @@ class Game  {
         }
         // console.log("New turn")
         //get a list of units left on the map
-        this.unitsForTurn = this.GetUnits()
+        // this.unitsForTurn = this.GetUnits()
+        this.unitsForTurn = shuffle(this.GetUnits())
         this.unitsForTurn = this.SetSpeedForTurn(this.unitsForTurn)
         this.unitsForTurn = this.MakeTurnSchedule(this.unitsForTurn)
         
@@ -312,6 +313,26 @@ function StartGame(){
     game = new Game()
     game.SetupButtons()
     
+}
+
+function shuffle(array) {
+    let counter = array.length;
+
+    // While there are elements in the array
+    while (counter > 0) {
+        // Pick a random index
+        let index = Math.floor(Math.random() * counter);
+
+        // Decrease counter by 1
+        counter--;
+
+        // And swap the last element with it
+        let temp = array[counter];
+        array[counter] = array[index];
+        array[index] = temp;
+    }
+
+    return array;
 }
 
 
