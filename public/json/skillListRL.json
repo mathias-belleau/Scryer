@@ -1,0 +1,40 @@
+{
+    "move": {
+        "name": "move",
+        "description": "allows you to move",
+        "costType": "single",
+        "costMatch": "*",
+        "speed": "instant"
+    },
+    "dodge": {
+        "name": "dodge",
+        "description": "allows you to dodge",
+        "costType": "double",
+        "costMatch": "*",
+        "speed": "instant"
+    },
+    "stab": {
+        "name": "stab",
+        "description": "a single tile slow stab",
+        "costType": "double",
+        "costMatch": "*",
+        "speed": "slow",
+        "dmg": 1
+    },
+    "cleave": {
+        "name": "stab",
+        "description": "a sweeping 3 tile slow cleave",
+        "costType": "double",
+        "costMatch": "*",
+        "speed": "slow",
+        "dmg": 1
+    },
+    "strike": {
+        "name": "strike",
+        "description": "a single tile fast downward smash",
+        "costType": "double",
+        "costMatch": "*",
+        "speed": "fast",
+        "dmg": 1
+    }
+}

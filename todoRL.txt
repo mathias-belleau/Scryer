@@ -1,0 +1,10 @@
+In progress:
+
+TODO:
+    units spawning
+    dynamicly list skill buttons from selected unit
+    dice buttons based on selected unit
+    dice selecters
+    
+FIXED:
+    match system for dice

@@ -5,6 +5,18 @@
         "str":3,
         "tileImg":"Orc"
     },
+    "Orc Brave" : {
+        "name":"Orc Brave",
+        "maxHP":3,
+        "str":3,
+        "tileImg":"Orc Brave"
+    },
+    "Orc Chief" : {
+        "name":"Orc Chief",
+        "maxHP":4,
+        "str":4,
+        "tileImg":"Orc Chief"
+    },
     "Orc Axe Thrower": {
         "name":"Orc Axe Thrower",
         "maxHP":2,

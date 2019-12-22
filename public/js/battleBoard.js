@@ -2,10 +2,11 @@
 var tileSet = document.createElement("img");
 tileSet.src = "../tileset/ProjectUtumno_full.png";
 
-let game = {}
+let battleBoard = {}
 
-class Game  {
-    constructor() {
+class BattleBoard  {
+    //armyList is a {player1: [a,b,c,d], player2: [a,b,c]} object
+    constructor(armyList = undefined) {
         this.GameOver = false
         const scale = 1
 
@@ -26,7 +27,6 @@ class Game  {
 
         //make the display panel
         this.display = new ROT.Display(options);
-        let display = this.display
         //scale a little better
         this.display.getContainer().getContext('2d').imageSmoothingEnabled = true; 
         this.display.getContainer().getContext('2d').scale(scale,scale);
@@ -48,33 +48,16 @@ class Game  {
         this.player1 = new Player('player', 0)
         this.player2 = new Player('NPC', 1)
 
-        // console.log("making human")
-        var spawnAmount = (Math.random() * 30) + 10
-        this.CreateUnit(this.player1, "Sigmund")
-        for(var spawnCount = 0; spawnCount < spawnAmount; spawnCount++){
-            this.CreateUnit(this.player1, "Human")
-            this.CreateUnit(this.player2, "Orc")
-            if(spawnCount % 3 == 0){
-                this.CreateUnit(this.player1, "Human Bowman")
-            }
-            if(spawnCount % 3 == 0){
-                this.CreateUnit(this.player2, "Orc Axe Thrower")
-            }
-        }
-        
-        
-        this.player1.SortRankFile(this.width, this.height)
-        this.player2.SortRankFile(this.width, this.height)
-
-        for(var u = 0; u < this.player1.unitList.length; u++){
-            var t = this.player1.unitList[u]
-            this.SpawnUnit(t, t.x, t.y)
-        }
-
-        
-        for(var u = 0; u < this.player2.unitList.length; u++){
-            var t = this.player2.unitList[u]
-            this.SpawnUnit(t, t.x, t.y)
+        console.log("AL: ", armyList)
+        //either load our army or spawn a default test one
+        if(armyList != undefined){
+            
+            //spawn the army in the list
+            this.GenerateArmyFromList(this.player1, armyList.player1)
+            this.GenerateArmyFromList(this.player2, armyList.player2)
+            this.SetupUnits()
+        }else {
+            this.GenerateSpawns();
         }
 
         this.DrawMap()
@@ -85,6 +68,8 @@ class Game  {
         window.addEventListener("click", clickCallback.bind(this)) 
         
     }
+
+ 
 
     //create and spawn unit
     CreateAndSpawn(player, unitType){
@@ -112,6 +97,49 @@ class Game  {
         this.mapData[x][y].unit.y = y
     }
 
+    GenerateArmyFromList(player, unitsToSpawn){
+        for(var x = 0; x < unitsToSpawn.length; x++){
+            this.CreateUnit(player, unitsToSpawn[x])
+        }
+    }
+
+    GenerateSpawns(){
+        // console.log("making human")
+        var spawnAmount = (Math.random() * 30) + 10
+        this.CreateUnit(this.player1, "Sigmund")
+        for(var spawnCount = 0; spawnCount < spawnAmount; spawnCount++){
+            this.CreateUnit(this.player1, "Human")
+            this.CreateUnit(this.player2, "Orc")
+            if(spawnCount % 3 == 0){
+                this.CreateUnit(this.player1, "Human Bowman")
+            }
+            if(spawnCount % 3 == 0){
+                this.CreateUnit(this.player2, "Orc Axe Thrower")
+            }
+        }
+
+        this.SetupUnits()
+       
+    }
+
+    //sorts the units into ranks and files
+    //then actually places them on the map
+    SetupUnits(){
+        this.player1.SortRankFile(this.width, this.height)
+        this.player2.SortRankFile(this.width, this.height)
+
+        for(var u = 0; u < this.player1.unitList.length; u++){
+            var t = this.player1.unitList[u]
+            this.SpawnUnit(t, t.x, t.y)
+        }
+
+        
+        for(var u = 0; u < this.player2.unitList.length; u++){
+            var t = this.player2.unitList[u]
+            this.SpawnUnit(t, t.x, t.y)
+        }
+    }
+
     DrawMap(){
         //iterate over each tile
         for (var x =0; x < this.width; x++){
@@ -136,7 +164,7 @@ class Game  {
             whatToDraw.push(this.mapData[x][y].unit.tileImg)
             // console.log(whatToDraw)
             fg.push("transparent")
-            bg.push((this.player1 == this.mapData[x][y].unit.player) ? "rgba(0,255,0,.2" : "rgba(255,0,0,.2")
+            bg.push((this.player1 == this.mapData[x][y].unit.player) ? "rgba(0,255,0,.2)" : "rgba(255,0,0,.2)")
         }
 
         //actually draw what's on this to map
@@ -270,11 +298,11 @@ class Game  {
         var units = this.GetUnits()
         //only 1 victory for now
         //all units for a player dead
-        var p1Alive = units.filter( (a) => a.Alive() && a.player == game.player1)
-        var p2Alive = units.filter( (a) => a.Alive() && a.player == game.player2)
+        var p1Alive = units.filter( (a) => a.Alive() && a.player == battleBoard.player1)
+        var p2Alive = units.filter( (a) => a.Alive() && a.player == battleBoard.player2)
         // console.log("p1 alive: ", p1Alive.length, " VS p2 alive: ", p2Alive.length)
         if(p1Alive <= 0 || p2Alive <= 0){
-            game.GameOver = true
+            battleBoard.GameOver = true
         }
     }
 
@@ -291,7 +319,7 @@ class Game  {
     SetupButtons(){
         const turnButton = document.getElementById("TurnButton")
         turnButton.addEventListener("click", function(e) {
-            game.Turn()
+            battleBoard.Turn()
             this.style.display = 'block'; 
             this.style.display = 'none'
         })
@@ -302,16 +330,16 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-//loads the resources for the game
+//loads the resources for the battleBoard
 function StartResourceLoad() {
     StartResourceLoading()
 }
 
 //actually start the game by making new instance of games
-function StartGame(){
+function StartGame(armyList = undefined){
     
-    game = new Game()
-    game.SetupButtons()
+    battleBoard = new BattleBoard(armyList)
+    battleBoard.SetupButtons()
     
 }
 

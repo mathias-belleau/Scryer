@@ -1,0 +1,11 @@
+{
+    "Human Village": {
+        "unitList":["Human","Human","Human","Human","Human","Human","Human","Human","Human","Human",
+                    "Human Bowman","Human Bowman","Human Bowman","Human Bowman","Human Bowman"]
+    },
+    "Orc Raiders": {
+        "unitList":["Orc Chief","Orc Brave","Orc Brave","Orc Brave","Orc","Orc","Orc","Orc","Orc","Orc",
+            "Orc","Orc","Orc"]
+    }
+
+}

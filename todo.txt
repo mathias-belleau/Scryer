@@ -1,18 +1,22 @@
 IN PROGRESS:
-    convert turns to single unit based instead of all at once
+
 
 TODO:
+    paperdoll system for weapons
     add stats overlay
     add stats panel
     add spells + targeting system
     arrow animation
     walking animation
     automate gameplay
-    army save system + game loading based on armies loaded
+    army save system
 
 FIX:
 
 DONE:
+    units pathfinding changes targets if it fails to path to priority
+    game loading based on armies loaded
+    convert turns to single unit based instead of all at once
     add team color
     units not taking turns in order?
     add ranged combat

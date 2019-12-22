@@ -1,0 +1,16 @@
+{
+    "orc": {
+        "name": "Orc",
+        "hp":2,
+        "stamina": 2,
+        "tileImg":"Orc",
+        "skills": ["move","dodge","cleave","strike"]
+    },
+    "recruit": {
+            "name": "Recruit",
+            "hp":2,
+            "stamina": 4,
+            "tileImg":"Human",
+            "skills": ["move", "dodge", "stab"]
+    }
+}

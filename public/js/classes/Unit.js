@@ -59,7 +59,7 @@ class Unit {
         //console.log("dmg done: ", dieRolls)
         if(dmg >= 1){
             //hit our enemy 
-            var enemyUnit = game.GetTile(target.x, target.y)
+            var enemyUnit = battleBoard.GetTile(target.x, target.y)
             enemyUnit = enemyUnit.unit
             enemyUnit.TakeDamage(dmg)
             console.log(this.name, " dealt ", dmg, " to ", enemyUnit.name , " rolling: ", dieRolls.toString())
@@ -90,11 +90,11 @@ class Unit {
             var xb = this.x
             var yb = this.y
             var passableCallback = function(xb, yb) {
-                if(game.mapData[xb] == undefined || game.mapData[xb][yb] == undefined){
+                if(battleBoard.mapData[xb] == undefined || battleBoard.mapData[xb][yb] == undefined){
                     return 0
                 }
                 //check if wall
-                if(game.mapData[xb][yb].tileType == 'a'){
+                if(battleBoard.mapData[xb][yb].tileType == 'a'){
                     return 0
                 }
                 //get list of neighbours somehow?
@@ -114,7 +114,7 @@ class Unit {
                     return 0
                 }
                 //if self || or target || empty return true 
-                if((this._fromX == xb && this._fromY == yb) || (unit.x == xb && unit.y == yb) || game.mapData[xb][yb].unit == undefined){
+                if((this._fromX == xb && this._fromY == yb) || (unit.x == xb && unit.y == yb) || battleBoard.mapData[xb][yb].unit == undefined){
                     return 1
                 }
                 
@@ -123,7 +123,7 @@ class Unit {
                 // if( (!contains(neighs, thisCoords) && game.mapData[this._fromX][this._fromY].unit.player == game.mapData[xb][yb].unit.player) ){
                 //     return 1
                 // }
-                if(game.mapData[xb][yb].unit.player != game.mapData[this._fromX][this._fromY].unit.player){
+                if(battleBoard.mapData[xb][yb].unit.player != battleBoard.mapData[this._fromX][this._fromY].unit.player){
                     return 1
                 }
                 return 0
@@ -146,7 +146,7 @@ class Unit {
                 // console.log("unit about to path to", unit.tileImg)
                 //dont path to ourselves, or a friendly unit
                 if(this != unit && this.player != unit.player){
-                        var astar = new ROT.Path.AStar(xb, yb, passableCallback, {topology:4});
+                        var astar = new ROT.Path.AStar(xb, yb, passableCallback, {topology:8});
 
                         //get the neighbours of this unit for callback
                         //var neighs = astar._getNeighbors(xb, yb)
@@ -170,18 +170,20 @@ class Unit {
             this.paths = this.paths.filter((a) => a.length > 0)
 
             //sort paths by distance
+            this.paths = shuffle(this.paths)
+
             this.paths = this.paths.sort(function(a,b) {return a.length - b.length})
             // console.log("b: ", paths)
 
             var targetPath = undefined
             //see if i we have a pathable target in our first 3 targets
-            if(this.paths.length > 0 && ( game.GetTile(this.paths[0][1][0],this.paths[0][1][1]).unit == undefined || game.GetTile(this.paths[0][1][0],this.paths[0][1][1]).unit.player != this.player)){
+            if(this.paths.length > 0 && ( battleBoard.GetTile(this.paths[0][1][0],this.paths[0][1][1]).unit == undefined || battleBoard.GetTile(this.paths[0][1][0],this.paths[0][1][1]).unit.player != this.player)){
                 var targetPath = this.paths[0]
-            } else if (this.paths.length > 1 && ( game.GetTile(this.paths[1][1][0],this.paths[1][1][1]).unit == undefined || game.GetTile(this.paths[1][1][0],this.paths[1][1][1]).unit.player != this.player)){
+            } else if (this.paths.length > 1 && ( battleBoard.GetTile(this.paths[1][1][0],this.paths[1][1][1]).unit == undefined || battleBoard.GetTile(this.paths[1][1][0],this.paths[1][1][1]).unit.player != this.player)){
                 var targetPath = this.paths[1]
-            }else if (this.paths.length > 2 && ( game.GetTile(this.paths[2][1][0],this.paths[2][1][1]).unit == undefined ||  game.GetTile(this.paths[2][1][0],this.paths[2][1][1]).unit.player != this.player) ) {
+            }else if (this.paths.length > 2 && ( battleBoard.GetTile(this.paths[2][1][0],this.paths[2][1][1]).unit == undefined ||  battleBoard.GetTile(this.paths[2][1][0],this.paths[2][1][1]).unit.player != this.player) ) {
                 var targetPath = this.paths[2]
-            }else if (this.paths.length > 3 && ( game.GetTile(this.paths[3][1][0],this.paths[3][1][1]).unit == undefined ||  game.GetTile(this.paths[3][1][0],this.paths[3][1][1]).unit.player != this.player) ) {
+            }else if (this.paths.length > 3 && ( battleBoard.GetTile(this.paths[3][1][0],this.paths[3][1][1]).unit == undefined ||  battleBoard.GetTile(this.paths[3][1][0],this.paths[3][1][1]).unit.player != this.player) ) {
                 var targetPath = this.paths[3]
             }
             if(targetPath != undefined){
@@ -226,7 +228,7 @@ class Unit {
         //get this units Tile
         var oldTile = mapData[this.x][this.y]
         // console.log(target.x)
-        var newTile = game.GetTile(target.x,target.y)
+        var newTile = battleBoard.GetTile(target.x,target.y)
         
        if(newTile == undefined || newTile.unit != undefined){
            return
@@ -243,8 +245,8 @@ class Unit {
         oldTile.unit = undefined
        
         //draw the tiles again
-        game.DrawTile(oldTile.x, oldTile.y)
-        game.DrawTile(newTile.x, newTile.y)
+        battleBoard.DrawTile(oldTile.x, oldTile.y)
+        battleBoard.DrawTile(newTile.x, newTile.y)
     }
 }
 
@@ -255,20 +257,8 @@ class Unit {
 
 
 let unitList = new Map()
+let armyList = {}
 
-function StartResourceLoading(){
-    // console.log("fetching")
-    fetch("../json/unitList.json")
-    .then(response => response.json())
-    .then(json => {
-        for(var test in json){
-            // console.log( json[test].name)
-            unitList.set(json[test].name, json[test])
-        }
-        // console.log("starting game")
-        StartGame()
-    });
-}
 
 
 
@@ -301,3 +291,35 @@ function _getNeighbors(self, cx, cy) {
 
     return result;
   };
+
+
+  function StartResourceLoading(){
+    // console.log("fetching")
+    fetch("../json/unitList.json")
+    .then(response => response.json())
+    .then(json => {
+        for(var test in json){
+            // console.log( json[test].name)
+            unitList.set(json[test].name, json[test])
+        }
+        StartResourceLoadingArmy()
+    });
+}
+
+function StartResourceLoadingArmy(){
+    // console.log("fetching")
+    fetch("../json/armyList.json")
+    .then(response => response.json())
+    .then(json => {
+        armyList = json
+        console.log(armyList)
+        //for now pick 2 random armies
+        var armies  = Object.keys(armyList)
+        var army1 = armyList[  armies[Math.floor(Math.random()* armies.length)]];
+        var army2 = armyList[  armies[Math.floor(Math.random()* armies.length)]];
+        console.log("army1: ", army1)
+
+        // StartGame({player1: army1.unitList, player2: army2.unitList})
+        StartGameRL()
+    });
+}
